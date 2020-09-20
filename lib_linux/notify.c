@@ -9,13 +9,13 @@ notify_on_change(const char * path)
 {
   char path_resolved[PATH_MAX] = {0};
   char * path_full = realpath(path, path_resolved);
-  printf("Will notify if anything happens in [%s].\n", path_resolved);
+  printf("Will notify if anything happens in %s.\n", path_resolved);
 
   int file_descriptior = inotify_init();
   int watch_descripton = inotify_add_watch(
     file_descriptior,
     path,
-    IN_ALL_EVENTS
+    IN_CREATE | IN_MOVE
   );
 
   size_t size_buff = 4096;
@@ -23,7 +23,13 @@ notify_on_change(const char * path)
   const struct inotify_event * event = NULL;
 
   ssize_t len = read(file_descriptior, buff, size_buff);
-  printf("len: %zd\n", len);
+  char * p = buff;
+  for (; p < buff+len; p += sizeof(struct inotify_event)+event->len) {
+    event = (const struct inotify_event *) p;
+    if (event->name) {
+      printf("%s\n", event->name);
+    }
+  }
 
   printf("End of notify_on_change.\n");
 }
