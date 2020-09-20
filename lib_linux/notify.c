@@ -8,7 +8,7 @@ void
 notify_on_change(const char * path)
 {
   char path_resolved[PATH_MAX] = {0};
-  char * path_full = realpath(path, path_resolved);
+  realpath(path, path_resolved);
   printf("Will notify if anything happens in %s.\n", path_resolved);
 
   int file_descriptior = inotify_init();
