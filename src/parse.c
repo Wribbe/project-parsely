@@ -3,6 +3,7 @@
 #include <dirent.h>
 
 #include "obj_parser.h"
+#include "notify.h"
 
 int
 main(void)
@@ -15,5 +16,8 @@ main(void)
     }
     closedir(d);
   }
+
   struct result_parsed obj = parse("res/cube.obj");
+
+  notify_on_change(".");
 }

@@ -8,11 +8,14 @@ bins := $(foreach p,$(wildcard ${DIR_SRC}/*.c),\
 
 LIB_SRC := $(wildcard lib/*.c)
 CC := gcc
+ARCH := linux
+
+DEPS := ${LIB_SRC} $(wildcard lib_${ARCH}/*) Makefile
 
 all: ${bins}
 
-${DIR_BIN}/% : ${DIR_SRC}/%.c  ${LIB_SRC} | ${DIR_BIN}
-	${CC} $^ -o $@ -Ilib -g -Wall -pedantic --std=c11
+${DIR_BIN}/% : ${DIR_SRC}/%.c ${DEPS} | ${DIR_BIN}
+	${CC} $(filter %.c,$^) -o $@ -Ilib -Ilib_${ARCH} -g -Wall -pedantic --std=c11
 
 ${DIR_BIN} :
 	mkdir -p $@
