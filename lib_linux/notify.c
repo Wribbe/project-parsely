@@ -15,19 +15,21 @@ notify_on_change(const char * path)
   int watch_descripton = inotify_add_watch(
     file_descriptior,
     path,
-    IN_CREATE | IN_MOVE
+    IN_CREATE | IN_MOVE | IN_DELETE
   );
 
   size_t size_buff = 4096;
   char buff[size_buff];
   const struct inotify_event * event = NULL;
 
-  ssize_t len = read(file_descriptior, buff, size_buff);
-  char * p = buff;
-  for (; p < buff+len; p += sizeof(struct inotify_event)+event->len) {
-    event = (const struct inotify_event *) p;
-    if (event->name) {
-      printf("%s\n", event->name);
+  for(;;) {
+    ssize_t len = read(file_descriptior, buff, size_buff);
+    char * p = buff;
+    for (; p < buff+len; p += sizeof(struct inotify_event)+event->len) {
+      event = (const struct inotify_event *) p;
+      if (event->name) {
+        printf("%s\n", event->name);
+      }
     }
   }
 
