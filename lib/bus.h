@@ -7,12 +7,18 @@ struct bus_event {
   int type_event;
 };
 
-typedef void (*bus_callback_function)(struct bus_event * event);
+typedef void (*function_callback_bus)(struct bus_event * event);
 
 int
-bus_register(bus_callback_function fn);
+bus_init(void);
+
+int
+bus_register(function_callback_bus fn);
 
 int
 bus_add(struct bus_event event);
+
+int
+bus_destroy(void);
 
 #endif
