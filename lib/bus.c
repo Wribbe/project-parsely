@@ -83,7 +83,7 @@ void *
 target_watch_event(void * args)
 {
   for (;;) {
-    printf("HELLO FROM EVENT WATCHER\n");
+    debug("%s\n", "HELLO FROM EVENT WATCHER");
     sleep(1); // TODO: TODO_CROSSPLAT
   }
   return NULL;
