@@ -1,4 +1,5 @@
 #include "bus.h"
+#include "utils.h"
 #include <unistd.h> // TODO: TODO_CROSSPLAT
 
 #define MAX_CONSUMERS 256
@@ -29,7 +30,7 @@ bus_init(void)
     target_watch_event,
     NULL
   );
-  printf("Bus has been finalized.\n");
+  debug("%s\n", "Bus has been initialized.");
   return -1;
 }
 
@@ -37,6 +38,7 @@ bus_init(void)
 int
 bus_destroy(void)
 {
+  debug("%s\n", "The bus has been destroyed.");
   return -1;
 }
 
@@ -44,6 +46,7 @@ bus_destroy(void)
 int
 bus_register(function_callback_bus fn)
 {
+  debug("%s\n", "Registered callback function.");
   return -1;
 }
 
@@ -51,6 +54,7 @@ bus_register(function_callback_bus fn)
 int
 bus_add(struct bus_event event)
 {
+  debug("%s\n", "Event was added to queue.");
   return -1;
 }
 
@@ -58,6 +62,7 @@ bus_add(struct bus_event event)
 int
 bus_unregister(function_callback_bus fn)
 {
+  debug("%s\n", "Function was unregistered.");
   return -1;
 }
 
@@ -69,6 +74,7 @@ bus_unregister(function_callback_bus fn)
 int
 bus_event_remove(size_t index)
 {
+  debug("%s\n", "Event was removed from queue.");
   return -1;
 }
 
