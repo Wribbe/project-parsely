@@ -5,6 +5,24 @@
 #include "obj_parser.h"
 #include "notify.h"
 #include "bus.h"
+#include "utils.h"
+
+
+void
+callback_a(struct bus_event  * event)
+{
+  UNUSED(event);
+  debug("%s\n", "Callback a got an event.");
+}
+
+
+void
+callback_b(struct bus_event  * event)
+{
+  UNUSED(event);
+  debug("%s\n", "Callback b got an event.");
+}
+
 
 int
 main(void)
@@ -21,5 +39,9 @@ main(void)
   struct result_parsed obj = parse("res/cube.obj");
 
   bus_init();
+
+  bus_register(callback_a);
+  bus_register(callback_b);
+
   notify_on_change(".");
 }
