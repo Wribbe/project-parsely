@@ -1,5 +1,5 @@
 #include "bus.h"
-// TODO: Make cross-platform.
+// TODO: TODO_CROSSPLAT
 #include <unistd.h>
 
 #define MAX_CONSUMERS 256
@@ -77,7 +77,7 @@ bus_event_remove(size_t index)
 void *
 target_watch_event(void * args)
 {
-  // TODO: Make cross-platform.
+  // TODO: TODO_CROSSPLAT
   for (;;) {
     printf("HELLO FROM EVENT WATCHER\n");
     sleep(1);
