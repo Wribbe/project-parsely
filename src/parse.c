@@ -4,6 +4,7 @@
 
 #include "obj_parser.h"
 #include "notify.h"
+#include "bus.h"
 
 int
 main(void)
@@ -19,5 +20,6 @@ main(void)
 
   struct result_parsed obj = parse("res/cube.obj");
 
+  bus_init();
   notify_on_change(".");
 }
