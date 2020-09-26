@@ -20,7 +20,7 @@ int
 bus_unregister(function_callback_bus fn);
 
 int
-bus_add(struct bus_event event);
+bus_add(struct bus_event * event);
 
 int
 bus_destroy(void);

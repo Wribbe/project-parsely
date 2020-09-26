@@ -11,16 +11,14 @@
 void
 callback_a(struct bus_event  * event)
 {
-  UNUSED(event);
-  debug("%s\n", "Callback a got an event.");
+  debug("Callback a got an event of type %d.\n", event->type_event);
 }
 
 
 void
 callback_b(struct bus_event  * event)
 {
-  UNUSED(event);
-  debug("%s\n", "Callback b got an event.");
+  debug("Callback b got an event of type %d.\n", event->type_event);
 }
 
 
@@ -42,6 +40,9 @@ main(void)
 
   bus_register(callback_a);
   bus_register(callback_b);
+
+  bus_add(&(struct bus_event){.type_event=1});
+  bus_add(&(struct bus_event){.type_event=2});
 
   notify_on_change(".");
 }
