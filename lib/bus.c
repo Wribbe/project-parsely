@@ -1,6 +1,5 @@
 #include "bus.h"
-// TODO: TODO_CROSSPLAT
-#include <unistd.h>
+#include <unistd.h> // TODO: TODO_CROSSPLAT
 
 #define MAX_CONSUMERS 256
 #define MAX_EVENTS 512
@@ -77,10 +76,9 @@ bus_event_remove(size_t index)
 void *
 target_watch_event(void * args)
 {
-  // TODO: TODO_CROSSPLAT
   for (;;) {
     printf("HELLO FROM EVENT WATCHER\n");
-    sleep(1);
+    sleep(1); // TODO: TODO_CROSSPLAT
   }
   return NULL;
 }
