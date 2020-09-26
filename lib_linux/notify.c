@@ -1,4 +1,5 @@
 #include "notify.h"
+#include "utils.h"
 
 #include <sys/inotify.h>
 #include <unistd.h>
@@ -9,7 +10,7 @@ notify_on_change(const char * path)
 {
   char path_resolved[PATH_MAX] = {0};
   realpath(path, path_resolved);
-  printf("Will notify if anything happens in %s.\n", path_resolved);
+  debug("Will notify if anything happens in %s.\n", path_resolved);
 
   int file_descriptior = inotify_init();
   int watch_descripton = inotify_add_watch(
@@ -28,10 +29,10 @@ notify_on_change(const char * path)
     for (; p < buff+len; p += sizeof(struct inotify_event)+event->len) {
       event = (const struct inotify_event *) p;
       if (event->name) {
-        printf("%s\n", event->name);
+        debug("%s\n", event->name);
       }
     }
   }
 
-  printf("End of notify_on_change.\n");
+  debug("%s\n", "End of notify_on_change.");
 }

@@ -100,6 +100,7 @@ void *
 target_watch_event(void * args)
 {
   for(;;) {
+    pthread_mutex_lock(&mutex_events);
     while (EVENTS == events_end) {
       debug("%s\n", "No events in queue, sleeping.");
       pthread_cond_wait(&condition_event_added, &mutex_events);
@@ -111,6 +112,7 @@ target_watch_event(void * args)
       }
     }
     events_end = EVENTS;
+    pthread_mutex_unlock(&mutex_events);
   }
   return NULL;
 }
