@@ -21,12 +21,15 @@ printf_stamped(const char * prefix, const char * fmt, ...)
     localtime(&time_date)
   );
 
-  snprintf(
-    &buffer_stamp[size_written_stamp],
-    SIZE_BUFFER_STAMP-size_written_stamp,
-    ".%09li",
-    time_nsec.tv_nsec
-  );
+  size_t remaining = SIZE_BUFFER_STAMP-size_written_stamp;
+  if (size_written_stamp && remaining) {
+    snprintf(
+      &buffer_stamp[size_written_stamp],
+      remaining,
+      ".%09li",
+      time_nsec.tv_nsec
+    );
+  }
 
   printf("[%s][%s]: ", prefix, buffer_stamp);
 
