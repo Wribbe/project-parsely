@@ -5,8 +5,13 @@
 #define MAX_CONSUMERS 256
 #define MAX_EVENTS 512
 
-function_callback_bus CONSUMERS[MAX_CONSUMERS] = {0};
-function_callback_bus * consumers_end = CONSUMERS;
+struct info_consumer {
+  TYPE_EVENT_ENUM bitflag_events;
+  function_callback_bus fn;
+};
+
+struct info_consumer CONSUMERS[MAX_CONSUMERS] = {0};
+struct info_consumer * consumers_end = CONSUMERS;
 
 struct bus_event EVENTS[MAX_EVENTS] = {0};
 struct bus_event * events_end = EVENTS;
@@ -14,6 +19,11 @@ struct bus_event * events_end = EVENTS;
 pthread_t thread_watcher = 0;
 pthread_cond_t condition_event_added = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t mutex_events = PTHREAD_MUTEX_INITIALIZER;
+
+
+TYPE_EVENT_ENUM EVENT_FILE          = 0<<0;
+TYPE_EVENT_ENUM EVENT_KEY           = 1<<0;
+
 
 void *
 target_watch_event(void * args);
@@ -48,9 +58,11 @@ bus_destroy(void)
 
 
 int
-bus_register(function_callback_bus fn)
+bus_register(function_callback_bus fn, TYPE_EVENT_ENUM bitflag_events)
 {
-  *consumers_end++ = fn;
+  consumers_end->fn = fn;
+  consumers_end->bitflag_events = bitflag_events;
+  consumers_end++;
   debug("%s\n", "Registered consumer callback function.");
   return -1;
 }
@@ -60,8 +72,8 @@ int
 bus_unregister(function_callback_bus fn)
 {
   size_t i = 0;
-  for (function_callback_bus * p = CONSUMERS; p<consumers_end; p++,i++) {
-    if (*p == fn) {
+  for (struct info_consumer * p = CONSUMERS; p<consumers_end; p++,i++) {
+    if (p->fn == fn) {
       CONSUMERS[i] = *consumers_end--;
     }
   }
@@ -107,8 +119,8 @@ target_watch_event(void * args)
     }
     debug("There are %ld new events!\n", events_end-EVENTS);
     for (struct bus_event * e = EVENTS; e < events_end; e++) {
-      for (function_callback_bus * c = CONSUMERS; c < consumers_end; c++) {
-        (*c)(e);
+      for (struct info_consumer * c = CONSUMERS; c < consumers_end; c++) {
+        (c->fn)(e);
       }
     }
     events_end = EVENTS;
