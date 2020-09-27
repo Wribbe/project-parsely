@@ -11,14 +11,20 @@
 void
 callback_a(struct bus_event  * event)
 {
-  debug("Callback a got an event of type %d.\n", event->type_event);
+  debug("Callback a got an event of type %s.\n", str_event_type(event));
 }
 
 
 void
 callback_b(struct bus_event  * event)
 {
-  debug("Callback b got an event of type %d.\n", event->type_event);
+  debug("Callback b got an event of type %s.\n", str_event_type(event));
+}
+
+void
+callback_c(struct bus_event  * event)
+{
+  debug("Callback c got an event of type %s.\n", str_event_type(event));
 }
 
 
@@ -39,11 +45,13 @@ main(void)
 
   bus_init();
 
-  bus_register(callback_a);
-  bus_register(callback_b);
+  bus_register(callback_a, EVENT_FILE);
+  bus_register(callback_b, EVENT_KEY);
+  bus_register(callback_c, EVENT_KEY | EVENT_FILE);
 
-  bus_add(&(struct bus_event){.type_event=1});
-  bus_add(&(struct bus_event){.type_event=2});
+  bus_add(&(struct bus_event){EVENT_FILE});
+  bus_add(&(struct bus_event){EVENT_KEY});
+  bus_add(&(struct bus_event){EVENT_KEY | EVENT_FILE});
 
   notify_on_change(".");
 }

@@ -2,6 +2,8 @@
 #include "utils.h"
 #include <unistd.h> // TODO: TODO_CROSSPLAT
 
+// Definitions and internal structures and objects.
+// ================================================
 
 #define MAX_CONSUMERS 256
 #define MAX_EVENTS 512
@@ -29,6 +31,13 @@ pthread_mutex_t mutex_events = PTHREAD_MUTEX_INITIALIZER;
 TYPE_EVENT_ENUM EVENT_FILE          = 0<<0;
 TYPE_EVENT_ENUM EVENT_KEY           = 1<<0;
 
+
+#define SIZE_BUFFER_EVENT_TYPES_STR 512
+char buffer_event_types_str[SIZE_BUFFER_EVENT_TYPES_STR];
+
+
+// Pre-declaration of functions defined later.
+// ===========================================
 
 void *
 target_watch_event(void * args);
@@ -103,6 +112,13 @@ bus_add(struct bus_event * event)
 }
 
 
+const char *
+str_event_type(struct bus_event * event)
+{
+  UNUSED(event);
+  return "TEMP-BUS-EVENT-STRING";
+}
+
 
 // Private functions.
 // ==================
@@ -110,7 +126,7 @@ bus_add(struct bus_event * event)
 void
 bus_copy_event_to(struct bus_event * from, struct bus_event * to)
 {
-  to->type_event = from->type_event;
+  to->bitflag_event_type = from->bitflag_event_type;
 }
 
 
