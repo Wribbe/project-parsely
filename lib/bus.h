@@ -10,6 +10,7 @@
 typedef uint16_t TYPE_EVENT_ENUM;
 extern TYPE_EVENT_ENUM EVENT_FILE;
 extern TYPE_EVENT_ENUM EVENT_KEY;
+extern TYPE_EVENT_ENUM EVENT_ALL;
 
 
 struct bus_event {

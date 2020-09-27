@@ -10,7 +10,7 @@
 
 
 struct info_consumer {
-  TYPE_EVENT_ENUM bitflag_events;
+  TYPE_EVENT_ENUM bitflag_event_type;
   function_callback_bus fn;
 };
 
@@ -30,6 +30,7 @@ pthread_mutex_t mutex_events = PTHREAD_MUTEX_INITIALIZER;
 
 TYPE_EVENT_ENUM EVENT_FILE          = 1<<0;
 TYPE_EVENT_ENUM EVENT_KEY           = 1<<1;
+TYPE_EVENT_ENUM EVENT_ALL           = ~0;
 
 
 #define SIZE_BUFFER_EVENT_TYPES_STR 512
@@ -76,10 +77,10 @@ bus_destroy(void)
 
 
 int
-bus_register(function_callback_bus fn, TYPE_EVENT_ENUM bitflag_events)
+bus_register(function_callback_bus fn, TYPE_EVENT_ENUM bitflag_event_type)
 {
   consumers_end->fn = fn;
-  consumers_end->bitflag_events = bitflag_events;
+  consumers_end->bitflag_event_type = bitflag_event_type;
   consumers_end++;
   debug("%s\n", "Registered consumer callback function.");
   return -1;
@@ -114,10 +115,17 @@ bus_add(struct bus_event * event)
   return -1;
 }
 
+
 char *
 str_event_type(struct bus_event * event)
 {
   char * p_buffer = buffer_event_types_str;
+
+  if (event->bitflag_event_type == EVENT_ALL) {
+    str_event_type_add("EVENT_ALL", p_buffer);
+    return buffer_event_types_str;
+  }
+
   if (event->bitflag_event_type & EVENT_FILE) {
     p_buffer = str_event_type_add("EVENT_FILE", p_buffer);
   }
@@ -150,7 +158,9 @@ target_watch_event(void * args)
     debug("There are %ld new events!\n", events_end-EVENTS);
     for (struct bus_event * e = EVENTS; e < events_end; e++) {
       for (struct info_consumer * c = CONSUMERS; c < consumers_end; c++) {
-        (c->fn)(e);
+        if (c->bitflag_event_type & e->bitflag_event_type) {
+          c->fn(e);
+        }
       }
     }
     events_end = EVENTS;

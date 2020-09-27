@@ -51,7 +51,7 @@ main(void)
 
   bus_add(&(struct bus_event){EVENT_FILE});
   bus_add(&(struct bus_event){EVENT_KEY});
-  bus_add(&(struct bus_event){EVENT_KEY | EVENT_FILE});
+  bus_add(&(struct bus_event){EVENT_ALL});
 
   notify_on_change(".");
 }
