@@ -2,12 +2,16 @@
 #define UTILS_H
 
 #include <pthread.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <time.h>
 
-extern pthread_mutex_t mutex_print;
-
-#define debug(s, ...) pthread_mutex_lock(&mutex_print); \
-  printf("[D]: "s, __VA_ARGS__); \
-  pthread_mutex_unlock(&mutex_print)
 #define UNUSED(x) (void)x
+
+void
+vprintf_stamped(const char * prefix, const char * fmt, ...);
+
+#define debug(fmt, ...) vprintf_stamped("D", fmt, __VA_ARGS__)
+#define error(fmt, ...) vprintf_stamped("!", fmt, __VA_ARGS__)
 
 #endif

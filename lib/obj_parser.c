@@ -1,15 +1,12 @@
 #include "obj_parser.h"
-
-#define ERR(str, ...) \
-  fprintf(stderr, "[!] Error: "str", aborting.\n", __VA_ARGS__);\
-  exit(EXIT_FAILURE);
+#include "utils.h"
 
 char *
 file_read(const char * path)
 {
   FILE * fh = fopen(path, "r");
   if(fh == NULL) {
-    ERR("Could not open file: %s", path);
+    error("Could not open file: %s", path);
   }
   return NULL;
 }
