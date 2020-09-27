@@ -47,6 +47,9 @@ void
 bus_copy_event_to(struct bus_event * from, struct bus_event * to);
 
 
+char *
+str_event_type_add(const char * name, char * p);
+
 // Public functions.
 // =================
 
@@ -111,12 +114,17 @@ bus_add(struct bus_event * event)
   return -1;
 }
 
-
-const char *
+char *
 str_event_type(struct bus_event * event)
 {
-  UNUSED(event);
-  return "TEMP-BUS-EVENT-STRING";
+  char * p_buffer = buffer_event_types_str;
+  if (event->bitflag_event_type & EVENT_FILE) {
+    p_buffer = str_event_type_add("EVENT_FILE", p_buffer);
+  }
+  if (event->bitflag_event_type & EVENT_KEY) {
+    p_buffer = str_event_type_add("EVENT_KEY", p_buffer);
+  }
+  return buffer_event_types_str;
 }
 
 
@@ -149,4 +157,20 @@ target_watch_event(void * args)
     pthread_mutex_unlock(&mutex_events);
   }
   return NULL;
+}
+
+
+char *
+str_event_type_add(const char * name, char * p)
+{
+  size_t left = SIZE_BUFFER_EVENT_TYPES_STR - (p - buffer_event_types_str);
+  if (!left) {
+    return p;
+  }
+  if (left < SIZE_BUFFER_EVENT_TYPES_STR) {
+    size_t written = snprintf(p, left, "%s", ",");
+    p += written;
+    left -= written;
+  }
+  return p+snprintf(p, left, "%s", name);
 }

@@ -40,7 +40,7 @@ int
 bus_destroy(void);
 
 
-const char *
+char *
 str_event_type(struct bus_event * event);
 
 
