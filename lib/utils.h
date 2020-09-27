@@ -9,6 +9,7 @@
 #define UNUSED(x) (void)x
 #define DEBUG 1
 
+
 void
 printf_stamped(const char * prefix, const char * fmt, ...);
 
@@ -19,5 +20,8 @@ printf_stamped(const char * prefix, const char * fmt, ...);
   #define debug(fmt, ...) (void)0
 #endif
 
-#define error(fmt, ...) printf_stamped("!", fmt, __VA_ARGS__)
+#define error(fmt, ...) printf_stamped("!", fmt, __VA_ARGS__); \
+  exit(EXIT_FAILURE)
+
+
 #endif
