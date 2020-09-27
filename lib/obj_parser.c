@@ -16,5 +16,6 @@ struct result_parsed
 parse(const char * filepath)
 {
   char * data = file_read(filepath);
+  UNUSED(data);
   return (struct result_parsed){0};
 }

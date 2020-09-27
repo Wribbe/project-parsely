@@ -13,11 +13,12 @@ notify_on_change(const char * path)
   debug("Will notify if anything happens in %s.\n", path_resolved);
 
   int file_descriptior = inotify_init();
-  int watch_descripton = inotify_add_watch(
+  int watch_descriptor = inotify_add_watch(
     file_descriptior,
     path,
     IN_CREATE | IN_MOVE | IN_DELETE
   );
+  UNUSED(watch_descriptor);
 
   size_t size_buff = 4096;
   char buff[size_buff];

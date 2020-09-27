@@ -35,6 +35,7 @@ main(void)
   }
 
   struct result_parsed obj = parse("res/cube.obj");
+  UNUSED(obj);
 
   bus_init();
 
