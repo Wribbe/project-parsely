@@ -28,8 +28,8 @@ pthread_cond_t condition_event_added = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t mutex_events = PTHREAD_MUTEX_INITIALIZER;
 
 
-TYPE_EVENT_ENUM EVENT_FILE          = 0<<0;
-TYPE_EVENT_ENUM EVENT_KEY           = 1<<0;
+TYPE_EVENT_ENUM EVENT_FILE          = 1<<0;
+TYPE_EVENT_ENUM EVENT_KEY           = 1<<1;
 
 
 #define SIZE_BUFFER_EVENT_TYPES_STR 512
