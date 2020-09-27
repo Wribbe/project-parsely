@@ -1,5 +1,6 @@
 #include "bus.h"
 #include "utils.h"
+#include <string.h>
 #include <unistd.h> // TODO: TODO_CROSSPLAT
 
 // Definitions and internal structures and objects.
@@ -7,10 +8,12 @@
 
 #define MAX_CONSUMERS 256
 #define MAX_EVENTS 512
+#define SIZE_CONSUMER_NAME 32
 
 
 struct info_consumer {
   TYPE_EVENT_ENUM bitflag_event_type;
+  char name[SIZE_CONSUMER_NAME];
   function_callback_bus fn;
 };
 
@@ -24,8 +27,11 @@ struct bus_event * events_end = EVENTS;
 
 
 pthread_t thread_watcher = 0;
-pthread_cond_t condition_event_added = PTHREAD_COND_INITIALIZER;
+
 pthread_mutex_t mutex_events = PTHREAD_MUTEX_INITIALIZER;
+
+pthread_cond_t condition_event_added = PTHREAD_COND_INITIALIZER;
+pthread_cond_t condition_safe_to_modify_consumers = PTHREAD_COND_INITIALIZER;
 
 
 TYPE_EVENT_ENUM EVENT_FILE          = 1<<0;
@@ -77,12 +83,24 @@ bus_destroy(void)
 
 
 int
-bus_register(function_callback_bus fn, TYPE_EVENT_ENUM bitflag_event_type)
+bus_register(
+  function_callback_bus fn,
+  const char * name,
+  TYPE_EVENT_ENUM bitflag_event_type
+)
 {
+  pthread_mutex_lock(&mutex_events);
+  while (EVENTS != events_end) {
+    pthread_cond_wait(&condition_safe_to_modify_consumers, &mutex_events);
+  }
+
   consumers_end->fn = fn;
+  strncpy(consumers_end->name, name, SIZE_CONSUMER_NAME);
   consumers_end->bitflag_event_type = bitflag_event_type;
+  debug("Registered callback function for %s.\n", consumers_end->name);
+
   consumers_end++;
-  debug("%s\n", "Registered consumer callback function.");
+  pthread_mutex_unlock(&mutex_events);
   return -1;
 }
 
@@ -91,12 +109,27 @@ int
 bus_unregister(function_callback_bus fn)
 {
   size_t i = 0;
+  pthread_mutex_lock(&mutex_events);
+  while (EVENTS != events_end) {
+    pthread_cond_wait(&condition_safe_to_modify_consumers, &mutex_events);
+  }
+  struct info_consumer * old = NULL;
   for (struct info_consumer * p = CONSUMERS; p<consumers_end; p++,i++) {
     if (p->fn == fn) {
-      CONSUMERS[i] = *consumers_end--;
+      consumers_end--;
+      old = &CONSUMERS[i];
+      old->bitflag_event_type = consumers_end->bitflag_event_type;
+      old->fn = consumers_end->fn;
+      strncpy(consumers_end->name, old->name, SIZE_CONSUMER_NAME);
+      break;
     }
   }
-  debug("%s\n", "Function was unregistered.");
+  if (old != NULL) {
+    debug("Callback function %s was unregistered.\n", old->name);
+  } else {
+    debug("%s\n", "Could not find matching function for unregistering.");
+  }
+  pthread_mutex_unlock(&mutex_events);
   return -1;
 }
 
@@ -164,6 +197,7 @@ target_watch_event(void * args)
       }
     }
     events_end = EVENTS;
+    pthread_cond_broadcast(&condition_safe_to_modify_consumers);
     pthread_mutex_unlock(&mutex_events);
   }
   return NULL;

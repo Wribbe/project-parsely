@@ -15,6 +15,7 @@ extern TYPE_EVENT_ENUM EVENT_ALL;
 
 struct bus_event {
   TYPE_EVENT_ENUM bitflag_event_type;
+  void * data;
 };
 
 
@@ -26,7 +27,11 @@ bus_init(void);
 
 
 int
-bus_register(function_callback_bus fn, TYPE_EVENT_ENUM bitflag_events);
+bus_register(
+  function_callback_bus fn,
+  const char * name,
+  TYPE_EVENT_ENUM bitflag_events
+);
 
 
 int
