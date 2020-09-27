@@ -6,7 +6,7 @@ pthread_mutex_t mutex_print = PTHREAD_MUTEX_INITIALIZER;
 char buffer_stamp[SIZE_BUFFER_STAMP] = {0};
 
 void
-vprintf_stamped(const char * prefix, const char * fmt, ...)
+printf_stamped(const char * prefix, const char * fmt, ...)
 {
   time_t time_date = time(NULL);
   struct timespec time_nsec = {0}; // TODO: TODO_CROSSPLAT

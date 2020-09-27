@@ -9,9 +9,9 @@
 #define UNUSED(x) (void)x
 
 void
-vprintf_stamped(const char * prefix, const char * fmt, ...);
+printf_stamped(const char * prefix, const char * fmt, ...);
 
-#define debug(fmt, ...) vprintf_stamped("D", fmt, __VA_ARGS__)
-#define error(fmt, ...) vprintf_stamped("!", fmt, __VA_ARGS__)
+#define debug(fmt, ...) printf_stamped("D", fmt, __VA_ARGS__)
+#define error(fmt, ...) printf_stamped("!", fmt, __VA_ARGS__)
 
 #endif
