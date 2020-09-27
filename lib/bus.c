@@ -2,19 +2,24 @@
 #include "utils.h"
 #include <unistd.h> // TODO: TODO_CROSSPLAT
 
+
 #define MAX_CONSUMERS 256
 #define MAX_EVENTS 512
+
 
 struct info_consumer {
   TYPE_EVENT_ENUM bitflag_events;
   function_callback_bus fn;
 };
 
+
 struct info_consumer CONSUMERS[MAX_CONSUMERS] = {0};
 struct info_consumer * consumers_end = CONSUMERS;
 
+
 struct bus_event EVENTS[MAX_EVENTS] = {0};
 struct bus_event * events_end = EVENTS;
+
 
 pthread_t thread_watcher = 0;
 pthread_cond_t condition_event_added = PTHREAD_COND_INITIALIZER;
@@ -27,6 +32,7 @@ TYPE_EVENT_ENUM EVENT_KEY           = 1<<0;
 
 void *
 target_watch_event(void * args);
+
 
 void
 bus_copy_event_to(struct bus_event * from, struct bus_event * to);
